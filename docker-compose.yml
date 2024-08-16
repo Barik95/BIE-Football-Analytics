@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # Database service
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: db
+      POSTGRES_PASSWORD: Santosh1995!
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # First table loader (run after api_loader independently)
+  table_loader_1:
+    build: .
+    depends_on:
+      - db  # Wait for DB service to be ready
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=Santosh1995!
+    command:  python pgload_competition_3y.py 
+
+  # Second table loader
+  table_loader_2:
+    build: .
+    depends_on:
+      - table_loader_1  # Run after the first loader
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=Santosh1995!
+    command: python  pgload_games_3y.py 
+
+  # Third table loader
+  table_loader_3:
+    build: .
+    depends_on:
+      - table_loader_2  # Run after the second loader
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=Santosh1995!
+    command: python  pgload_standing_3y.py 
+  # Fourth table loader
+  table_loader_4:
+    build: .
+    depends_on:
+      - table_loader_3  # Run after the third loader
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=Santosh1995!
+    command: python  pgload_topscorers_3y.py 
+
+volumes:
+  postgres_data:
