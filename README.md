@@ -1,3 +1,6 @@
+Football Analytics Project
+
+
 Project Overview
 This project focuses on building an Extract, Transform, Load (ETL) pipeline using Python to gather, process, and load football data from an API into a PostgreSQL database. The data pipeline is automated using Docker, ensuring that the process is both repeatable and scalable.
 
